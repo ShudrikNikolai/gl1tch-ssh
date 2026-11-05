@@ -7,6 +7,8 @@ import (
 
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/config"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/pg"
+	usersRepo "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/repository"
+	usersSrv "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/service"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/transport"
 	"github.com/gomodule/redigo/redis"
 )
@@ -18,6 +20,9 @@ type Container struct {
 	Pgx   *pg.Client
 	Redis *redis.Pool
 	SSH   *transport.Server
+
+	UsersRepo usersRepo.Repository
+	UsersSrv  usersSrv.Service
 }
 
 func New(ctx context.Context, cfg config.Config, log *slog.Logger) (*Container, error) {

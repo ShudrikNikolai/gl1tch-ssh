@@ -8,6 +8,8 @@ import (
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/pg"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/pg/migrations"
 	redisinfra "github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/redis"
+	usersRepoImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/repository/repo"
+	usersSrvImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/service/srv"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/transport"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
@@ -75,10 +77,14 @@ func (c *Container) initRedis() error {
 }
 
 func (c *Container) initRepo(_ context.Context) error {
+	c.UsersRepo = usersRepoImpl.New(c.Pgx.Pool())
+
 	return nil
 }
 
 func (c *Container) initServices(_ context.Context) error {
+	c.UsersSrv = usersSrvImpl.New(c.UsersRepo, c.Log, c.Cfg.NickMaxLen)
+
 	return nil
 }
 
