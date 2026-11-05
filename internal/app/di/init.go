@@ -8,6 +8,8 @@ import (
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/pg"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/pg/migrations"
 	redisinfra "github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/redis"
+	chatsRepoImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/repository/repo"
+	chatsSrvImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/service/srv"
 	usersRepoImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/repository/repo"
 	usersSrvImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/service/srv"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/transport"
@@ -77,12 +79,14 @@ func (c *Container) initRedis() error {
 }
 
 func (c *Container) initRepo(_ context.Context) error {
+	c.ChatsRepo = chatsRepoImpl.New(c.Pgx.Pool())
 	c.UsersRepo = usersRepoImpl.New(c.Pgx.Pool())
 
 	return nil
 }
 
 func (c *Container) initServices(_ context.Context) error {
+	c.ChatsSrv = chatsSrvImpl.New(c.ChatsRepo, c.Log, c.Cfg.ChatMaxMembers)
 	c.UsersSrv = usersSrvImpl.New(c.UsersRepo, c.Log, c.Cfg.NickMaxLen)
 
 	return nil
