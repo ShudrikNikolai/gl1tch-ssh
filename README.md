@@ -73,7 +73,7 @@ deploy/                           — docker-compose (Postgres, Redis)
 
 ```bash
 # 1. Клонировать
-git clone https://github.com/<you>/gl1tch-ssh.git
+git clone https://github.com/ShudrikNikolai/gl1tch-ssh.git
 cd gl1tch-ssh
 
 # 2. Поднять зависимости
