@@ -1,0 +1,78 @@
+version: "2"
+
+run:
+  timeout: 5m
+  relative-path-mode: gomod
+  issues-exit-code: 1
+  tests: true
+  modules-download-mode: readonly
+
+output:
+  formats:
+    text:
+      print-linter-name: true
+      print-issued-lines: true
+      colors: true
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  uniq-by-line: true
+
+linters:
+  default: standard
+  enable:
+    - govet
+    - gocritic
+    - revive
+    - unused
+    - bodyclose
+    - asciicheck
+    - cyclop
+    - dupl
+    - ineffassign
+    - errorlint
+    - errname
+    - forbidigo
+    - contextcheck
+    - containedctx
+  disable:
+    - gocyclo
+    - lll
+
+  exclusions:
+    generated: strict
+    rules:
+      - path: _test\.go
+        linters:
+          - cyclop
+          - dupl
+          - gosec
+
+  settings:
+
+    gosec:
+      config:
+        global:
+          audit: true
+          show-ignored: true
+        severity: "medium"
+        confidence: "medium"
+
+    cyclop:
+      max-complexity: 20
+
+    revive:
+      severity: warning
+
+formatters:
+  enable:
+    - gofumpt
+    - gci
+  settings:
+    gofumpt: {}
+    gci:
+      sections:
+        - Standard
+        - Default
+      no-inline-comments: false

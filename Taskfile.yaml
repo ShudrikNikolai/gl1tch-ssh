@@ -1,0 +1,80 @@
+version: '3'
+
+dotenv: ['.env']
+
+tasks:
+  default:
+    desc: Lint and test
+    cmds:
+      - task: lint
+      - task: test
+
+  run:
+    desc: Run the SSH server
+    cmds:
+      - go run ./cmd/ssh
+
+  build:
+    desc: Build the binary into ./bin
+    cmds:
+      - go build -trimpath -o bin/gl1tch-ssh ./cmd/ssh
+
+  vet:
+    desc: Run go vet
+    cmds:
+      - go vet ./...
+
+  lint:
+    desc: Run golangci-lint
+    cmds:
+      - golangci-lint run
+
+  fmt:
+    desc: Format the code
+    cmds:
+      - golangci-lint fmt
+
+  test:
+    desc: Run unit tests
+    cmds:
+      - go test ./...
+
+  test:race:
+    desc: Run unit tests with the race detector
+    cmds:
+      - go test -race ./...
+
+  test:cover:
+    desc: Run tests with coverage
+    cmds:
+      - go test -cover ./...
+
+  test:integration:
+    desc: Run integration tests (Docker required)
+    cmds:
+      - go test -tags=integration ./...
+
+  deploy:up:
+    desc: Start Postgres and Redis
+    cmds:
+      - docker compose -f deploy/docker-compose.yaml up -d
+
+  deploy:down:
+    desc: Stop Postgres and Redis
+    cmds:
+      - docker compose -f deploy/docker-compose.yaml down
+
+  migrate:up:
+    desc: Apply migrations via goose CLI (the app also does this on startup)
+    cmds:
+      - go run github.com/pressly/goose/v3/cmd/goose@v3.29.0 -dir internal/infrastructure/pg/migrations -table schema_migrations postgres "{{.PG_DSN}}" up
+
+  migrate:down:
+    desc: Roll back the last migration
+    cmds:
+      - go run github.com/pressly/goose/v3/cmd/goose@v3.29.0 -dir internal/infrastructure/pg/migrations -table schema_migrations postgres "{{.PG_DSN}}" down
+
+  migrate:status:
+    desc: Show migration status
+    cmds:
+      - go run github.com/pressly/goose/v3/cmd/goose@v3.29.0 -dir internal/infrastructure/pg/migrations -table schema_migrations postgres "{{.PG_DSN}}" status
