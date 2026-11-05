@@ -262,7 +262,12 @@ func (c *client) isMember(ctx context.Context, chatID, userID uuid.UUID) (bool, 
 
 	err := c.pool.QueryRow(
 		ctx,
-		`SELECT EXISTS (SELECT 1 FROM chat_members WHERE chat_id = $1 AND user_id = $2)`,
+		`SELECT EXISTS (
+		     SELECT 1
+		     FROM chat_members m
+		     JOIN chats c ON c.id = m.chat_id
+		     WHERE m.chat_id = $1 AND m.user_id = $2 AND c.deleted_at IS NULL
+		 )`,
 		chatID,
 		userID,
 	).Scan(&member)

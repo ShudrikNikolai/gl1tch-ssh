@@ -7,6 +7,7 @@ import (
 
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/config"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/pg"
+	"github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/aggregate"
 	chatsRepo "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/repository"
 	chatsSrv "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/service"
 	messagesRepo "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/messages/repository"
@@ -32,6 +33,7 @@ type Container struct {
 	Broadcaster  messagesSrv.Broadcaster
 	UsersRepo    usersRepo.Repository
 	UsersSrv     usersSrv.Service
+	Aggregate    *aggregate.Aggregate
 }
 
 func New(ctx context.Context, cfg config.Config, log *slog.Logger) (*Container, error) {

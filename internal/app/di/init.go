@@ -8,6 +8,7 @@ import (
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/pg"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/pg/migrations"
 	redisinfra "github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/redis"
+	"github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/aggregate"
 	chatsRepoImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/repository/repo"
 	chatsSrvImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/service/srv"
 	messagesRepoImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/messages/repository/repo"
@@ -99,6 +100,14 @@ func (c *Container) initServices(_ context.Context) error {
 		c.Cfg.MessageMaxRunes,
 	)
 	c.UsersSrv = usersSrvImpl.New(c.UsersRepo, c.Log, c.Cfg.NickMaxLen)
+
+	c.Aggregate = aggregate.New(
+		c.ChatsSrv,
+		c.MessagesSrv,
+		c.UsersSrv,
+		c.Broadcaster,
+		c.Log,
+	)
 
 	return nil
 }
