@@ -1,6 +1,8 @@
 package converter
 
 import (
+	"time"
+
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/repository/models"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/service"
 )
@@ -10,9 +12,19 @@ func ToDomain(chat models.Chat) service.Chat {
 		ID:        chat.ID,
 		HostID:    chat.HostID,
 		Token:     chat.Token,
-		CreatedAt: chat.CreatedAt,
-		DeletedAt: chat.DeletedAt,
+		CreatedAt: chat.CreatedAt.UTC(),
+		DeletedAt: utcPtr(chat.DeletedAt),
 	}
+}
+
+func utcPtr(value *time.Time) *time.Time {
+	if value == nil {
+		return nil
+	}
+
+	utc := value.UTC()
+
+	return &utc
 }
 
 func ToModel(chat service.Chat) models.Chat {

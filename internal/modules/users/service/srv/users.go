@@ -57,7 +57,7 @@ func (u *Users) Register(ctx context.Context, fingerprint, nickname string) (ser
 		ID:          id,
 		Nickname:    nickname,
 		Fingerprint: fingerprint,
-		CreatedAt:   time.Now().UTC(),
+		CreatedAt:   time.Now().UTC().Truncate(time.Microsecond),
 	}
 
 	if err = u.repo.Create(ctx, user); err != nil {

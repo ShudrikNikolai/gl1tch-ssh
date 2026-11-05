@@ -64,7 +64,7 @@ func (m *Messages) Send(
 		ChatID:    chatID,
 		AuthorID:  authorID,
 		Text:      text,
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: time.Now().UTC().Truncate(time.Microsecond),
 	}
 
 	if err = m.repo.Insert(ctx, msg); err != nil {

@@ -10,18 +10,38 @@ import (
 	"net"
 
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/config"
+	"github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/aggregate"
+	chatsvc "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/service"
+	usersvc "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/service"
 	"github.com/skevetter/ssh"
 )
 
 // Server — SSH-транспорт приложения.
 type Server struct {
-	log *slog.Logger
-	srv *ssh.Server
-	ln  net.Listener
+	cfg   config.Config
+	log   *slog.Logger
+	srv   *ssh.Server
+	ln    net.Listener
+	users usersvc.Service
+	chats chatsvc.Service
+	agg   *aggregate.Aggregate
 }
 
-func NewServer(cfg config.Config, log *slog.Logger) (*Server, error) {
-	s := &Server{log: log}
+func NewServer(
+	cfg config.Config,
+	log *slog.Logger,
+	users usersvc.Service,
+	chats chatsvc.Service,
+	agg *aggregate.Aggregate,
+) (*Server, error) {
+	s := &Server{
+		cfg:   cfg,
+		log:   log,
+		users: users,
+		chats: chats,
+		agg:   agg,
+	}
+
 	s.srv = &ssh.Server{
 		Handler:          s.handleSession,
 		PublicKeyHandler: s.handlePublicKey,
@@ -71,15 +91,9 @@ func (s *Server) handlePublicKey(_ ssh.Context, key ssh.PublicKey) bool {
 }
 
 func (s *Server) handleSession(sess ssh.Session) {
-	fp := fingerprint(sess.PublicKey())
-	s.log.Info(
-		"ssh session connected",
-		"user", sess.User(),
-		"remote", sess.RemoteAddr().String(),
-		"fingerprint", fp,
-	)
+	session := newSession(s, sess, fingerprint(sess.PublicKey()))
+	session.run()
 
-	_, _ = fmt.Fprintf(sess, "gl1tch-ssh\nfingerprint: %s\n", fp)
 	_ = sess.Exit(0)
 }
 

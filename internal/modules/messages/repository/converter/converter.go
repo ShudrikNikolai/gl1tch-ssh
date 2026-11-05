@@ -11,7 +11,7 @@ func ToDomain(msg models.Message) service.Message {
 		ChatID:    msg.ChatID,
 		AuthorID:  msg.AuthorID,
 		Text:      msg.Text,
-		CreatedAt: msg.CreatedAt,
+		CreatedAt: msg.CreatedAt.UTC(),
 	}
 }
 

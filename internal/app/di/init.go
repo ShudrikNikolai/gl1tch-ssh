@@ -113,7 +113,7 @@ func (c *Container) initServices(_ context.Context) error {
 }
 
 func (c *Container) initServers() error {
-	srv, err := transport.NewServer(c.Cfg, c.Log)
+	srv, err := transport.NewServer(c.Cfg, c.Log, c.UsersSrv, c.ChatsSrv, c.Aggregate)
 	if err != nil {
 		return err
 	}

@@ -10,7 +10,7 @@ func ToDomain(user models.User) service.User {
 		ID:          user.ID,
 		Nickname:    user.Nickname,
 		Fingerprint: user.Fingerprint,
-		CreatedAt:   user.CreatedAt,
+		CreatedAt:   user.CreatedAt.UTC(),
 	}
 }
 

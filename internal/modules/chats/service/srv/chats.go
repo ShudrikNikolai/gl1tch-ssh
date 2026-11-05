@@ -47,7 +47,7 @@ func (c *Chats) Create(ctx context.Context, hostID uuid.UUID) (service.Chat, err
 		ID:        id,
 		HostID:    hostID,
 		Token:     token,
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: time.Now().UTC().Truncate(time.Microsecond),
 	}
 
 	if err = c.repo.Create(ctx, chat); err != nil {
