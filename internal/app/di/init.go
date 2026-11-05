@@ -10,6 +10,8 @@ import (
 	redisinfra "github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/redis"
 	chatsRepoImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/repository/repo"
 	chatsSrvImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/service/srv"
+	messagesRepoImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/messages/repository/repo"
+	messagesSrvImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/messages/service/srv"
 	usersRepoImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/repository/repo"
 	usersSrvImpl "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/service/srv"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/transport"
@@ -80,13 +82,22 @@ func (c *Container) initRedis() error {
 
 func (c *Container) initRepo(_ context.Context) error {
 	c.ChatsRepo = chatsRepoImpl.New(c.Pgx.Pool())
+	c.MessagesRepo = messagesRepoImpl.New(c.Pgx.Pool())
 	c.UsersRepo = usersRepoImpl.New(c.Pgx.Pool())
 
 	return nil
 }
 
 func (c *Container) initServices(_ context.Context) error {
+	c.Broadcaster = redisinfra.NewRedisBroadcaster(c.Redis, c.Log)
+
 	c.ChatsSrv = chatsSrvImpl.New(c.ChatsRepo, c.Log, c.Cfg.ChatMaxMembers)
+	c.MessagesSrv = messagesSrvImpl.New(
+		c.MessagesRepo,
+		c.Broadcaster,
+		c.Log,
+		c.Cfg.MessageMaxRunes,
+	)
 	c.UsersSrv = usersSrvImpl.New(c.UsersRepo, c.Log, c.Cfg.NickMaxLen)
 
 	return nil

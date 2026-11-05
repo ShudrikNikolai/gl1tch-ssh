@@ -3,6 +3,7 @@ module github.com/ShudrikNikolai/gl1tch-ssh
 go 1.26.1
 
 require (
+	github.com/alicebob/miniredis/v2 v2.40.0
 	github.com/caarlos0/env/v11 v11.4.2
 	github.com/gomodule/redigo v1.9.3
 	github.com/google/uuid v1.6.0
@@ -18,6 +19,7 @@ require (
 	github.com/jackc/puddle/v2 v2.2.3 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/sethvargo/go-retry v0.5.0 // indirect
+	github.com/yuin/gopher-lua v1.1.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.58.0 // indirect
 	golang.org/x/sync v0.24.0 // indirect

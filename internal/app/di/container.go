@@ -9,6 +9,8 @@ import (
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/infrastructure/pg"
 	chatsRepo "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/repository"
 	chatsSrv "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/chats/service"
+	messagesRepo "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/messages/repository"
+	messagesSrv "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/messages/service"
 	usersRepo "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/repository"
 	usersSrv "github.com/ShudrikNikolai/gl1tch-ssh/internal/modules/users/service"
 	"github.com/ShudrikNikolai/gl1tch-ssh/internal/transport"
@@ -23,10 +25,13 @@ type Container struct {
 	Redis *redis.Pool
 	SSH   *transport.Server
 
-	ChatsRepo chatsRepo.Repository
-	ChatsSrv  chatsSrv.Service
-	UsersRepo usersRepo.Repository
-	UsersSrv  usersSrv.Service
+	ChatsRepo    chatsRepo.Repository
+	ChatsSrv     chatsSrv.Service
+	MessagesRepo messagesRepo.Repository
+	MessagesSrv  messagesSrv.Service
+	Broadcaster  messagesSrv.Broadcaster
+	UsersRepo    usersRepo.Repository
+	UsersSrv     usersSrv.Service
 }
 
 func New(ctx context.Context, cfg config.Config, log *slog.Logger) (*Container, error) {
